@@ -9,5 +9,4 @@ public class FuelPriceParserServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(FuelPriceParserServiceApplication.class, args);
     }
-
 }
