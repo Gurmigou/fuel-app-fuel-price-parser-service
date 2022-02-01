@@ -1,0 +1,13 @@
+package com.fueladvisor.fuelpriceparserservice;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class FuelPriceParserServiceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FuelPriceParserServiceApplication.class, args);
+    }
+
+}
