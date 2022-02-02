@@ -1,4 +1,4 @@
-package com.fueladvisor.fuelpriceparserservice.repository;
+package com.fueladvisor.fuelpriceparserservice.repository.externalData;
 
 import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
 

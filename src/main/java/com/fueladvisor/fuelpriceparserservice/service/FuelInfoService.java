@@ -1,14 +1,18 @@
 package com.fueladvisor.fuelpriceparserservice.service;
 
-import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
-import com.fueladvisor.fuelpriceparserservice.repository.FuelDataParser;
+import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
+import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
 import com.fueladvisor.fuelpriceparserservice.repository.FuelInfoRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.RegionRepository;
+import com.fueladvisor.fuelpriceparserservice.repository.externalData.FuelDataParser;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FuelInfoService {
@@ -30,7 +34,7 @@ public class FuelInfoService {
 
     public void updateFuelData() {
         try {
-            FuelDataParsedResult parsedResult = fuelDataParser.parseFuelData();
+            var parsedResult = fuelDataParser.parseFuelData();
 
             regionRepository.saveAll(parsedResult.regions());
             gasStationRepository.saveAll(parsedResult.gasStations());
@@ -38,5 +42,22 @@ public class FuelInfoService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<FuelInfoDto> getFuelInfosInRegion(String region) {
+        var fuelInfos = fuelInfoRepository.getFuelInfosByRegionName(region);
+
+        return fuelInfos.stream()
+                .map(this::mapToFuelInfoDto)
+                .collect(Collectors.toList());
+    }
+
+    private FuelInfoDto mapToFuelInfoDto(FuelInfo fuelInfo) {
+        return FuelInfoDto.builder()
+                .fuelType(fuelInfo.getFuelType().getName())
+                .region(fuelInfo.getRegion().getName())
+                .gasStation(fuelInfo.getGasStation().getName())
+                .price(fuelInfo.getPrice())
+                .build();
     }
 }
