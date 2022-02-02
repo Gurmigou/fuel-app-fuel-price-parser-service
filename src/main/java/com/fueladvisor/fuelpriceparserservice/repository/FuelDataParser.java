@@ -1,11 +1,9 @@
 package com.fueladvisor.fuelpriceparserservice.repository;
 
-import com.fueladvisor.fuelpriceparserservice.model.FuelInfo;
+import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface FuelDataParser {
-    List<FuelInfo> parseFuelData() throws IOException;
-
+    FuelDataParsedResult parseFuelData() throws IOException;
 }

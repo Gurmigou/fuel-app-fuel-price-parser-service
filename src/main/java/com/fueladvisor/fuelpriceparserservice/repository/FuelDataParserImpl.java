@@ -1,9 +1,10 @@
 package com.fueladvisor.fuelpriceparserservice.repository;
 
-import com.fueladvisor.fuelpriceparserservice.model.FuelInfo;
-import com.fueladvisor.fuelpriceparserservice.model.FuelType;
-import com.fueladvisor.fuelpriceparserservice.model.GasStation;
-import com.fueladvisor.fuelpriceparserservice.model.Region;
+import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
+import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
+import com.fueladvisor.fuelpriceparserservice.model.entity.FuelType;
+import com.fueladvisor.fuelpriceparserservice.model.entity.GasStation;
+import com.fueladvisor.fuelpriceparserservice.model.entity.Region;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,9 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import static com.fueladvisor.fuelpriceparserservice.model.FuelType.*;
+import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.*;
 
 @Component
 public class FuelDataParserImpl implements FuelDataParser {
@@ -24,45 +26,60 @@ public class FuelDataParserImpl implements FuelDataParser {
             List.of(A95_PLUS, A95, A92, DIESEL_FUEL, GAS);
 
     @Override
-    public List<FuelInfo> parseFuelData() throws IOException {
+    public FuelDataParsedResult parseFuelData() throws IOException {
         var document = fetchParsedPage();
         var dataElements = getTDHtmlDataElements(document);
-        var fuelInfoList = new ArrayList<FuelInfo>();
 
-        parseFuelDataHelper(dataElements, fuelInfoList);
-
-        return fuelInfoList;
+        return parseFuelDataHelper(dataElements);
     }
 
-    private void parseFuelDataHelper(List<Element> dataElements, List<FuelInfo> fuelInfoList) {
-        String region = "";
-        for (Element element : dataElements) {
+    private FuelDataParsedResult parseFuelDataHelper(List<Element> dataElements) {
+        String regionName = "";
+        var regionsMap = new HashMap<String, Region>();
+        var gasStationsMap = new HashMap<String, GasStation>();
+        var fuelInfoList = new ArrayList<FuelInfo>();
 
+        for (Element element : dataElements) {
             // means that should parse a region name
             if (element.childrenSize() == 1)
-                region = parseRegion(element);
+                regionName = parseRegion(element);
             else {
                 var gasStationAndPrices = parseGasStationAndPrices(
                         element.getElementsByTag("td"));
 
-                createFuelInfosForGasStation(region, gasStationAndPrices.getFirst(),
-                        gasStationAndPrices.getSecond(), fuelInfoList);
+                // retrieve region or create a new one if not exists
+                Region region = regionsMap.computeIfAbsent(regionName, Region::new);
+
+                // retrieve gasStation or create a new one if not exists
+                GasStation gasStation = gasStationsMap.computeIfAbsent(
+                        gasStationAndPrices.getFirst(), GasStation::new);
+
+                createFuelInfosForGasStation(
+                        region,
+                        gasStation,
+                        gasStationAndPrices.getSecond(),
+                        fuelInfoList
+                );
             }
         }
+
+        return new FuelDataParsedResult(fuelInfoList, regionsMap.values(), gasStationsMap.values());
     }
 
-    private void createFuelInfosForGasStation(String region, String gasStation,
-                                              List<Double> prices, List<FuelInfo> fuelInfoList) {
+    private void createFuelInfosForGasStation(Region region,
+                                              GasStation gasStation,
+                                              List<Double> prices,
+                                              List<FuelInfo> fuelInfoResultList) {
         // prices.size() == fuelTypes.size()
         for (int i = 0; i < prices.size(); i++) {
             FuelInfo fuelInfo = FuelInfo.builder()
-                    .region(new Region(region))
-                    .gasStation(new GasStation(gasStation))
+                    .region(region)
+                    .gasStation(gasStation)
                     .fuelType(fuelTypes.get(i))
                     .price(prices.get(i))
                     .build();
 
-            fuelInfoList.add(fuelInfo);
+            fuelInfoResultList.add(fuelInfo);
         }
     }
 

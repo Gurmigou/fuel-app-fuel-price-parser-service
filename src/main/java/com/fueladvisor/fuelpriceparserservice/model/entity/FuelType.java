@@ -1,4 +1,4 @@
-package com.fueladvisor.fuelpriceparserservice.model;
+package com.fueladvisor.fuelpriceparserservice.model.entity;
 
 import lombok.Getter;
 

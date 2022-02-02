@@ -1,4 +1,4 @@
-package com.fueladvisor.fuelpriceparserservice.model;
+package com.fueladvisor.fuelpriceparserservice.model.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +23,7 @@ public class FuelInfo {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Region region;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     @Column(nullable = false)
     private FuelType fuelType;
 

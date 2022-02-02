@@ -1,4 +1,4 @@
-package com.fueladvisor.fuelpriceparserservice.model;
+package com.fueladvisor.fuelpriceparserservice.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,13 +15,13 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class GasStation {
+public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
 
-    public GasStation(String name) {
+    public Region(String name) {
         this.name = name;
     }
 }
