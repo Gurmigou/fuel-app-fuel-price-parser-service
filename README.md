@@ -30,6 +30,7 @@ http://DOMAIN_NAME/api/v1/fuel-info?regoin="region_name_example"
         "price": 34.09
     },
     ... 
+]    
 ```
 
 ---
