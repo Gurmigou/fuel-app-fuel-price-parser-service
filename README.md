@@ -11,10 +11,14 @@ The source of the data is [there](https://index.minfin.com.ua/markets/fuel/detai
 
 ### Actions (API)
 This section shows a list of possible requests and their example responses.
-#### Get information about the fuel in the specified region
+### Get information about the fuel in the specified region
+**HTTP method**
+```
+GET
+```
 **URL**
 ```
-GET  http://DOMAIN_NAME/api/v1/fuel-info?regoin="region_name_example"
+http://DOMAIN_NAME/api/v1/fuel-info?regoin="region_name_example"
 ```
 **Response example:**
 ```jsonc
