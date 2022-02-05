@@ -4,10 +4,7 @@ import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
 import com.fueladvisor.fuelpriceparserservice.service.FuelInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,10 +18,10 @@ public class FuelInfoController {
         this.fuelInfoService = fuelInfoService;
     }
 
-//    @PostMapping("/update")
-//    public void updateData() {
-//        fuelInfoService.updateFuelData();
-//    }
+    @PostMapping("/update")
+    public void updateData() {
+        fuelInfoService.updateFuelData();
+    }
 
     @GetMapping
     public ResponseEntity<List<FuelInfoDto>> getFuelInfoInRegion(@RequestParam String region) {

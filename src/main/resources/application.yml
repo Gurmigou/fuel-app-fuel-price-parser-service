@@ -1,4 +1,9 @@
+server:
+   port: 0
+
 spring:
+   application:
+      name: fuel-app-parser-service
    datasource:
       url: jdbc:mysql://localhost:3306/fuel_price_service
       username: root
@@ -8,3 +13,10 @@ spring:
       hibernate:
          ddl-auto: update
       show-sql: true
+
+eureka:
+   client:
+      serviceUrl:
+         defaultZone: http://localhost:8761/eureka
+   instance:
+      instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
