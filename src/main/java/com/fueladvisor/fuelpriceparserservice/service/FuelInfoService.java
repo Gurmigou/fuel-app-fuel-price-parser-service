@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +76,9 @@ public class FuelInfoService {
     }
 
     public List<FuelInfoDto> getFuelInfosInRegion(String regionLatin) {
+        if (Objects.equals(regionLatin, "Kyiv City"))
+            regionLatin = "Kyivs'ka oblast";
+
         var fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
 
         return fuelInfos.stream()
