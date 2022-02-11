@@ -9,6 +9,7 @@ import com.fueladvisor.fuelpriceparserservice.repository.externalData.FuelDataPa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class FuelInfoService {
         this.regionRepository = regionRepository;
     }
 
+    @Transactional
     public void updateFuelData() {
         try {
             var parsedResult = fuelDataParser.parseFuelData();
