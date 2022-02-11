@@ -17,7 +17,7 @@ public class ScheduledParserService {
         this.fuelInfoService = fuelInfoService;
     }
 
-    @Scheduled(fixedRate = 20L, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.DAYS)
     public void scheduledParseFuelData() {
         fuelInfoService.updateFuelData();
     }
