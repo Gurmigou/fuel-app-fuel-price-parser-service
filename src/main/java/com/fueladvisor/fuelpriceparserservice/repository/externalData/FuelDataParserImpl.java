@@ -16,14 +16,43 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.*;
+import static java.util.Map.entry;
+import static java.util.Map.ofEntries;
 
 @Component
 public class FuelDataParserImpl implements FuelDataParser {
     private static final String URL = "https://index.minfin.com.ua/markets/fuel/detail/";
     private static final List<FuelType> fuelTypes =
             List.of(A95_PLUS, A95, A92, DIESEL_FUEL, GAS);
+    private static final Map<String, String> regions = ofEntries(
+            entry("Черкасская обл.", "Cherkas'ka oblast"),
+            entry("Черниговская обл.", "Chernihivs'ka oblast"),
+            entry("Черновицкая обл.", "Chernivets'ka oblast"),
+            entry("Днепропетровская обл.", "Dnipropetrovs'ka oblast"),
+            entry("Донецкая обл.", "Donets'ka oblast"),
+            entry("Ивано-Франковская обл.", "Ivano-Frankivs'ka oblast"),
+            entry("Харьковская обл.", "Kharkivs'ka oblast"),
+            entry("Херсонская обл.", "Khersons'ka oblast"),
+            entry("Хмельницкая обл.", "Khmel'nyts'ka oblast"),
+            entry("Кировоградская обл.", "Kirovohrads'ka oblast"),
+            entry("Киевская обл.", "Kyivs'ka oblast"),
+            entry("Львовская обл.", "L'vivs'ka oblast"),
+            entry("Луганская обл.", "Luhans'ka oblast"),
+            entry("Николаевская обл.", "Mykolaivs'ka oblast"),
+            entry("Одесская обл.", "Odes'ka oblast"),
+            entry("Полтавская обл.", "Poltavs'ka oblast"),
+            entry("Ровенская обл.", "Rivnens'ka oblast"),
+            entry("Сумская обл.", "Sums'ka oblast"),
+            entry("Тернопольская обл.", "Ternopil's'ka oblast"),
+            entry("Винницкая обл.", "Vinnyts'ka oblast"),
+            entry("Волынская обл.", "Volyns'ka oblast"),
+            entry("Запорожская обл.", "Zaporiz'ka oblast"),
+            entry("Житомирская обл.", "Zhytomyrs'ka oblast"),
+            entry("Закарпатская обл.", "Zakarpats'ka oblast'")
+    );
 
     @Override
     public FuelDataParsedResult parseFuelData() throws IOException {
@@ -48,7 +77,8 @@ public class FuelDataParserImpl implements FuelDataParser {
                         element.getElementsByTag("td"));
 
                 // retrieve region or create a new one if not exists
-                Region region = regionsMap.computeIfAbsent(regionName, Region::new);
+                Region region = regionsMap.computeIfAbsent(regionName,
+                        name -> new Region(name, regions.get(name)));
 
                 // retrieve gasStation or create a new one if not exists
                 GasStation gasStation = gasStationsMap.computeIfAbsent(

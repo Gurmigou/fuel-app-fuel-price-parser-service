@@ -6,7 +6,6 @@ import com.fueladvisor.fuelpriceparserservice.repository.FuelInfoRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.RegionRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.externalData.FuelDataParser;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +43,8 @@ public class FuelInfoService {
         }
     }
 
-    public List<FuelInfoDto> getFuelInfosInRegion(String region) {
-        var fuelInfos = fuelInfoRepository.getFuelInfosByRegionName(region);
+    public List<FuelInfoDto> getFuelInfosInRegion(String regionLatin) {
+        var fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
 
         return fuelInfos.stream()
                 .map(this::mapToFuelInfoDto)

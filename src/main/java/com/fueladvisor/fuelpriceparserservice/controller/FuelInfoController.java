@@ -24,8 +24,8 @@ public class FuelInfoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FuelInfoDto>> getFuelInfoInRegion(@RequestParam String region) {
-        List<FuelInfoDto> fuelInfosDto = fuelInfoService.getFuelInfosInRegion(region);
+    public ResponseEntity<List<FuelInfoDto>> getFuelInfoInRegion(@RequestParam String regionLatin) {
+        List<FuelInfoDto> fuelInfosDto = fuelInfoService.getFuelInfosInRegion(regionLatin);
         return ResponseEntity.ok(fuelInfosDto);
     }
 }

@@ -20,8 +20,10 @@ public class Region {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    private String latinName;
 
-    public Region(String name) {
+    public Region(String name, String latinName) {
         this.name = name;
+        this.latinName = latinName;
     }
 }
