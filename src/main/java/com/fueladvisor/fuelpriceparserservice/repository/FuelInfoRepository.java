@@ -19,5 +19,5 @@ public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
         INNER JOIN FETCH fi.region r
         WHERE r.latinName = :regionLatin
     """)
-    List<FuelInfo> getFuelInfosByRegionLatinName(@Param("region") String regionLatin);
+    List<FuelInfo> getFuelInfosByRegionLatinName(@Param("regionLatin") String regionLatin);
 }
