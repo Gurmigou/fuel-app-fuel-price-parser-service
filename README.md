@@ -37,28 +37,28 @@ http://DOMAIN_NAME/api/v1/fuel-info?regionLatin="region_name_example"
 
 ### A list of available regions:
 <ol>
-    <li>Винницкая обл.</li>
-<li>Волынская обл.</li>
-<li>Днепропетровская обл.</li>
-<li>Донецкая обл.</li>
-<li>Житомирская обл.</li>
-<li>Закарпатская обл.</li>
-<li>Запорожская обл.</li>
-<li>Ивано-Франковская обл.</li>
-<li>Киевская обл.</li>
-<li>Кировоградская обл.</li>
-<li>Луганская обл.</li>
-<li>Львовская обл.</li>
-<li>Николаевская обл.</li>
-<li>Одесская обл.</li>
-<li>Полтавская обл.</li>
-<li>Ровенская обл.</li>
-<li>Сумская обл.</li>
-<li>Тернопольская обл.</li>
-<li>Харьковская обл.</li>
-<li>Херсонская обл.</li>
-<li>Хмельницкая обл.</li>
-<li>Черкасская обл.</li>
-<li>Черниговская обл.</li>
-<li>Черновицкая обл.</li>
+<li>Vinnyts'ka oblast, Винницкая обл.</li>
+<li>Volyns'ka oblast, Волынская обл.</li>
+<li>Dnipropetrovs'ka oblast, Днепропетровская обл.</li>
+<li>Donets'ka oblast, Донецкая обл.</li>
+<li>Zhytomyrs'ka oblast, Житомирская обл.</li>
+<li>Zakarpats'ka oblast', Закарпатская обл.</li>
+<li>Zaporiz'ka oblast, Запорожская обл.</li>
+<li>Ivano-Frankivs'ka oblast, Ивано-Франковская обл.</li>
+<li>Kyivs'ka oblast, Киевская обл.</li>
+<li>Kirovohrads'ka oblast, Кировоградская обл.</li>
+<li>Luhans'ka oblast, Луганская обл.</li>
+<li>L'vivs'ka oblast, Львовская обл.</li>
+<li>Mykolaivs'ka oblast, Николаевская обл.</li>
+<li>Odes'ka oblast, Одесская обл.</li>
+<li>Poltavs'ka oblast, Полтавская обл.</li>
+<li>Rivnens'ka oblast, Ровенская обл.</li>
+<li>Sums'ka oblast, Сумская обл.</li>
+<li>Ternopil's'ka oblast, Тернопольская обл.</li>
+<li>Kharkivs'ka oblast, Харьковская обл.</li>
+<li>Khersons'ka oblast, Херсонская обл.</li>
+<li>Khmel'nyts'ka oblast, Хмельницкая обл.</li>
+<li>Cherkas'ka oblast, Черкасская обл.</li>
+<li>Chernihivs'ka oblast, Черниговская обл.</li>
+<li>Chernivets'ka oblast, Черновицкая обл.</li>
 </ol>    
