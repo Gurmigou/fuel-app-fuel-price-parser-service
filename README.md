@@ -18,7 +18,7 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/fuel-info?region="region_name_example"
+http://DOMAIN_NAME/api/v1/fuel-info?regionLatin="region_name_example"
 ```
 **Response example:**
 ```jsonc
