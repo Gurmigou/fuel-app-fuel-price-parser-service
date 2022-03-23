@@ -75,6 +75,7 @@ public class FuelInfoService {
         }
     }
 
+    @Transactional
     public List<FuelInfoDto> getFuelInfosInRegion(String regionLatin) {
         if (Objects.equals(regionLatin, "Kyiv City"))
             regionLatin = "Kyivs'ka oblast";
