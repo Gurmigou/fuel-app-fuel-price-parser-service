@@ -41,12 +41,12 @@ public class FuelInfoService {
 
         Iterable<Region> regions = regionRepository.findAll();
         if (!regions.iterator().hasNext()) {
-            regionRepository.saveAll(parsedResult.regions());
+            regionRepository.saveAll(parsedResult.getRegions());
         } else {
             Map<String, Region> regionsMap = new HashMap<>();
             regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
 
-            parsedResult.regions()
+            parsedResult.getRegions()
                     .forEach(parsedRegion -> {
                         Region foundRegion = regionsMap.get(parsedRegion.getLatinName());
                         parsedRegion.setId(foundRegion.getId());
@@ -55,21 +55,21 @@ public class FuelInfoService {
 
         Iterable<GasStation> gasStations = gasStationRepository.findAll();
         if (!gasStations.iterator().hasNext()) {
-            gasStationRepository.saveAll(parsedResult.gasStations());
+            gasStationRepository.saveAll(parsedResult.getGasStations());
         } else {
             Map<String, GasStation> gasStationsMap = new HashMap<>();
             gasStations.forEach(gasStation -> gasStationsMap.put(gasStation.getName(), gasStation));
 
-            parsedResult.gasStations()
+            parsedResult.getGasStations()
                     .forEach(parsedGasStation -> {
                         GasStation foundGasStation = gasStationsMap.get(parsedGasStation.getName());
                         parsedGasStation.setId(foundGasStation.getId());
                     });
         }
 
-        fuelInfoRepository.saveAll(parsedResult.fuelInfoList());
+        fuelInfoRepository.saveAll(parsedResult.getFuelInfoList());
 
-        return Optional.of(parsedResult.fuelInfoList().size());
+        return Optional.of(parsedResult.getFuelInfoList().size());
     }
 
     @Transactional

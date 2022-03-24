@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -19,6 +20,10 @@ public class ScheduledParserService {
 
     @Scheduled(fixedRate = 1L, timeUnit = TimeUnit.DAYS)
     public void scheduledParseFuelData() {
-        fuelInfoService.updateFuelData();
+        try {
+            fuelInfoService.updateFuelData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

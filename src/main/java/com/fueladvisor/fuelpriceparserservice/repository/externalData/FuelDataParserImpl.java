@@ -13,46 +13,41 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.*;
-import static java.util.Map.entry;
-import static java.util.Map.ofEntries;
 
 @Component
 public class FuelDataParserImpl implements FuelDataParser {
     private static final String URL = "https://index.minfin.com.ua/markets/fuel/detail/";
-    private static final List<FuelType> fuelTypes =
-            List.of(A95_PLUS, A95, A92, DIESEL_FUEL, GAS);
-    private static final Map<String, String> regions = ofEntries(
-            entry("Черкасская обл.", "Cherkas'ka oblast"),
-            entry("Черниговская обл.", "Chernihivs'ka oblast"),
-            entry("Черновицкая обл.", "Chernivets'ka oblast"),
-            entry("Днепропетровская обл.", "Dnipropetrovs'ka oblast"),
-            entry("Донецкая обл.", "Donets'ka oblast"),
-            entry("Ивано-Франковская обл.", "Ivano-Frankivs'ka oblast"),
-            entry("Харьковская обл.", "Kharkivs'ka oblast"),
-            entry("Херсонская обл.", "Khersons'ka oblast"),
-            entry("Хмельницкая обл.", "Khmel'nyts'ka oblast"),
-            entry("Кировоградская обл.", "Kirovohrads'ka oblast"),
-            entry("Киевская обл.", "Kyivs'ka oblast"),
-            entry("Львовская обл.", "L'vivs'ka oblast"),
-            entry("Луганская обл.", "Luhans'ka oblast"),
-            entry("Николаевская обл.", "Mykolaivs'ka oblast"),
-            entry("Одесская обл.", "Odes'ka oblast"),
-            entry("Полтавская обл.", "Poltavs'ka oblast"),
-            entry("Ровенская обл.", "Rivnens'ka oblast"),
-            entry("Сумская обл.", "Sums'ka oblast"),
-            entry("Тернопольская обл.", "Ternopil's'ka oblast"),
-            entry("Винницкая обл.", "Vinnyts'ka oblast"),
-            entry("Волынская обл.", "Volyns'ka oblast"),
-            entry("Запорожская обл.", "Zaporiz'ka oblast"),
-            entry("Житомирская обл.", "Zhytomyrs'ka oblast"),
-            entry("Закарпатская обл.", "Zakarpats'ka oblast'")
-    );
+    private static final List<FuelType> fuelTypes = Arrays.asList(A95_PLUS, A95, A92, DIESEL_FUEL, GAS);
+
+    private static final Map<String, String> regions = new HashMap<String, String>(){{
+        put("Черкасская обл.", "Cherkas'ka oblast");
+        put("Черниговская обл.", "Chernihivs'ka oblast");
+        put("Черновицкая обл.", "Chernivets'ka oblast");
+        put("Днепропетровская обл.", "Dnipropetrovs'ka oblast");
+        put("Донецкая обл.", "Donets'ka oblast");
+        put("Ивано-Франковская обл.", "Ivano-Frankivs'ka oblast");
+        put("Харьковская обл.", "Kharkivs'ka oblast");
+        put("Херсонская обл.", "Khersons'ka oblast");
+        put("Хмельницкая обл.", "Khmel'nyts'ka oblast");
+        put("Кировоградская обл.", "Kirovohrads'ka oblast");
+        put("Киевская обл.", "Kyivs'ka oblast");
+        put("Львовская обл.", "L'vivs'ka oblast");
+        put("Луганская обл.", "Luhans'ka oblast");
+        put("Николаевская обл.", "Mykolaivs'ka oblast");
+        put("Одесская обл.", "Odes'ka oblast");
+        put("Полтавская обл.", "Poltavs'ka oblast");
+        put("Ровенская обл.", "Rivnens'ka oblast");
+        put("Сумская обл.", "Sums'ka oblast");
+        put("Тернопольская обл.", "Ternopil's'ka oblast");
+        put("Винницкая обл.", "Vinnyts'ka oblast");
+        put("Волынская обл.", "Volyns'ka oblast");
+        put("Запорожская обл.", "Zaporiz'ka oblast");
+        put("Житомирская обл.", "Zhytomyrs'ka oblast");
+        put("Закарпатская обл.", "Zakarpats'ka oblast'");
+    }};
 
     @Override
     public FuelDataParsedResult parseFuelData() throws IOException {

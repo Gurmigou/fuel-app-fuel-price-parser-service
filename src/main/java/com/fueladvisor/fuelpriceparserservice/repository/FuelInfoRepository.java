@@ -10,11 +10,10 @@ import java.util.List;
 
 @Repository
 public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
-    @Query("""
-        FROM FuelInfo fi
-        INNER JOIN FETCH fi.gasStation gs
-        INNER JOIN FETCH fi.region r
-        WHERE r.latinName = :regionLatin
-    """)
+    @Query("FROM FuelInfo fi " +
+           "INNER JOIN FETCH fi.gasStation gs " +
+           "INNER JOIN FETCH fi.region r " +
+           "WHERE r.latinName = :regionLatin"
+    )
     List<FuelInfo> getFuelInfosByRegionLatinName(@Param("regionLatin") String regionLatin);
 }
