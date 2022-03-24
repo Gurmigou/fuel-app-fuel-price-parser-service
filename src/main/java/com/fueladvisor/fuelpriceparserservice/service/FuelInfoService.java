@@ -52,7 +52,11 @@ public class FuelInfoService {
         } else {
             System.out.println(6);
             Map<String, Region> regionsMap = new HashMap<>();
-            regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
+            regions.forEach(region -> {
+                System.out.println("for each region: " + (region == null));
+                System.out.println("add: " + region.getLatinName() + " <-> " + region);
+                regionsMap.put(region.getLatinName(), region);
+            });
 
             System.out.println(7);
             System.out.println("parsed result: " + (parsedResult == null));
