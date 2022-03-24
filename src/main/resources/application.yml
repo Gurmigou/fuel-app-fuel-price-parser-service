@@ -1,13 +1,13 @@
 server:
-   port: 0
+   port: 9090
 
 spring:
    application:
       name: fuel-app-parser-service
    datasource:
-      url: jdbc:mysql://localhost:3306/fuel_price_service
-      username: root
-      password: root
+      url: jdbc:mysql://@eu-cdbr-west-02.cleardb.net/heroku_cbd789b3d0712cf?useUnicode=yes&characterEncoding=UTF-8
+      username: b18560def51940
+      password: ca4c1855
       driver-class-name: com.mysql.cj.jdbc.Driver
    jpa:
       hibernate:
@@ -17,6 +17,6 @@ spring:
 eureka:
    client:
       serviceUrl:
-         defaultZone: http://localhost:8761/eureka
+         defaultZone: https://e-petrol-eureka.herokuapp.com/eureka
    instance:
       instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/fuel-info")
@@ -19,8 +21,17 @@ public class FuelInfoController {
     }
 
     @PostMapping("/update")
-    public void updateData() {
-        fuelInfoService.updateFuelData();
+    public ResponseEntity<?> updateData() {
+        try {
+            Optional<Integer> result = fuelInfoService.updateFuelData();
+            return result
+                    .map(integer -> ResponseEntity.ok(String.format("%d fuel objects were parsed", integer)))
+                    .orElseGet(() -> ResponseEntity.ok("Nothing was parsed"));
+        } catch (IOException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.toString());
+        }
     }
 
     @GetMapping

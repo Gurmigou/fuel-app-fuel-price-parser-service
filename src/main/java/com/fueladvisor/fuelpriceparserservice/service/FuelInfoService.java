@@ -1,5 +1,6 @@
 package com.fueladvisor.fuelpriceparserservice.service;
 
+import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
 import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
 import com.fueladvisor.fuelpriceparserservice.model.entity.GasStation;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,42 +36,40 @@ public class FuelInfoService {
     }
 
     @Transactional
-    public void updateFuelData() {
-        try {
-            var parsedResult = fuelDataParser.parseFuelData();
+    public Optional<Integer> updateFuelData() throws IOException {
+        FuelDataParsedResult parsedResult = fuelDataParser.parseFuelData();
 
-            Iterable<Region> regions = regionRepository.findAll();
-            if (!regions.iterator().hasNext()) {
-                regionRepository.saveAll(parsedResult.regions());
-            } else {
-                var regionsMap = new HashMap<String, Region>();
-                regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
+        Iterable<Region> regions = regionRepository.findAll();
+        if (!regions.iterator().hasNext()) {
+            regionRepository.saveAll(parsedResult.regions());
+        } else {
+            Map<String, Region> regionsMap = new HashMap<>();
+            regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
 
-                parsedResult.regions()
-                        .forEach(parsedRegion -> {
-                            Region foundRegion = regionsMap.get(parsedRegion.getLatinName());
-                            parsedRegion.setId(foundRegion.getId());
-                        });
-            }
-
-            Iterable<GasStation> gasStations = gasStationRepository.findAll();
-            if (!gasStations.iterator().hasNext()) {
-                gasStationRepository.saveAll(parsedResult.gasStations());
-            } else {
-                var gasStationsMap = new HashMap<String, GasStation>();
-                gasStations.forEach(gasStation -> gasStationsMap.put(gasStation.getName(), gasStation));
-
-                parsedResult.gasStations()
-                        .forEach(parsedGasStation -> {
-                            GasStation foundGasStation = gasStationsMap.get(parsedGasStation.getName());
-                            parsedGasStation.setId(foundGasStation.getId());
-                        });
-            }
-
-            fuelInfoRepository.saveAll(parsedResult.fuelInfoList());
-        } catch (IOException e) {
-            e.printStackTrace();
+            parsedResult.regions()
+                    .forEach(parsedRegion -> {
+                        Region foundRegion = regionsMap.get(parsedRegion.getLatinName());
+                        parsedRegion.setId(foundRegion.getId());
+                    });
         }
+
+        Iterable<GasStation> gasStations = gasStationRepository.findAll();
+        if (!gasStations.iterator().hasNext()) {
+            gasStationRepository.saveAll(parsedResult.gasStations());
+        } else {
+            Map<String, GasStation> gasStationsMap = new HashMap<>();
+            gasStations.forEach(gasStation -> gasStationsMap.put(gasStation.getName(), gasStation));
+
+            parsedResult.gasStations()
+                    .forEach(parsedGasStation -> {
+                        GasStation foundGasStation = gasStationsMap.get(parsedGasStation.getName());
+                        parsedGasStation.setId(foundGasStation.getId());
+                    });
+        }
+
+        fuelInfoRepository.saveAll(parsedResult.fuelInfoList());
+
+        return Optional.of(parsedResult.fuelInfoList().size());
     }
 
     @Transactional
@@ -80,7 +77,7 @@ public class FuelInfoService {
         if (Objects.equals(regionLatin, "Kyiv City"))
             regionLatin = "Kyivs'ka oblast";
 
-        var fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
+        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
 
         return fuelInfos.stream()
                 .map(this::mapToFuelInfoDto)

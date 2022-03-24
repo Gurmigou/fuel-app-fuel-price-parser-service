@@ -56,24 +56,24 @@ public class FuelDataParserImpl implements FuelDataParser {
 
     @Override
     public FuelDataParsedResult parseFuelData() throws IOException {
-        var document = fetchParsedPage();
-        var dataElements = getTDHtmlDataElements(document);
+        Document document = fetchParsedPage();
+        List<Element> dataElements = getTDHtmlDataElements(document);
 
         return parseFuelDataHelper(dataElements);
     }
 
     private FuelDataParsedResult parseFuelDataHelper(List<Element> dataElements) {
         String regionName = "";
-        var regionsMap = new HashMap<String, Region>();
-        var gasStationsMap = new HashMap<String, GasStation>();
-        var fuelInfoList = new ArrayList<FuelInfo>();
+        Map<String, Region> regionsMap = new HashMap<>();
+        Map<String, GasStation> gasStationsMap = new HashMap<>();
+        List<FuelInfo> fuelInfoList = new ArrayList<>();
 
         for (Element element : dataElements) {
             // means that should parse a region name
             if (element.childrenSize() == 1)
                 regionName = parseRegion(element);
             else {
-                var gasStationAndPrices = parseGasStationAndPrices(
+                Pair<String, List<Double>> gasStationAndPrices = parseGasStationAndPrices(
                         element.getElementsByTag("td"));
 
                 // retrieve region or create a new one if not exists
