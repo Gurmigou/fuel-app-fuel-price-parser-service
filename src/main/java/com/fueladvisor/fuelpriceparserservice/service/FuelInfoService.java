@@ -55,10 +55,19 @@ public class FuelInfoService {
             regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
 
             System.out.println(7);
+            System.out.println("parsed result: " + (parsedResult == null));
+            System.out.println("parsed result get regions: " + (parsedResult.getRegions() == null));
 
             parsedResult.getRegions()
                     .forEach(parsedRegion -> {
+
+                        System.out.println("region: " + parsedRegion);
+                        System.out.println("parsed region get latin name: " + parsedRegion.getLatinName());
+
                         Region foundRegion = regionsMap.get(parsedRegion.getLatinName());
+
+                        System.out.println("found region: " + foundRegion);
+
                         parsedRegion.setId(foundRegion.getId());
                     });
 
