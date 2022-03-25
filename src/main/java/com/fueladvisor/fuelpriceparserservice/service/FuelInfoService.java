@@ -37,76 +37,38 @@ public class FuelInfoService {
 
     @Transactional
     public Optional<Integer> updateFuelData() throws IOException {
-        System.out.println(1);
         FuelDataParsedResult parsedResult = fuelDataParser.parseFuelData();
-        System.out.println(2);
 
         Iterable<Region> regions = regionRepository.findAll();
 
-        System.out.println(3);
-
         if (!regions.iterator().hasNext()) {
-            System.out.println(4);
             regionRepository.saveAll(parsedResult.getRegions());
-            System.out.println(5);
         } else {
-            System.out.println(6);
             Map<String, Region> regionsMap = new HashMap<>();
-            regions.forEach(region -> {
-                System.out.println("for each region: " + (region == null));
-                System.out.println("add: " + region.getLatinName() + " <-> " + region);
-                regionsMap.put(region.getLatinName(), region);
-            });
-
-            System.out.println(7);
-            System.out.println("parsed result: " + (parsedResult == null));
-            System.out.println("parsed result get regions: " + (parsedResult.getRegions() == null));
-
-            System.out.println(8);
+            regions.forEach(region -> regionsMap.put(region.getLatinName(), region));
 
             parsedResult.getRegions()
                     .forEach(parsedRegion -> {
-
-                        System.out.println("region: " + parsedRegion);
-                        System.out.println("parsed region get latin name: " + parsedRegion.getLatinName());
-
                         Region foundRegion = regionsMap.get(parsedRegion.getLatinName());
-
-                        System.out.println("found region: " + foundRegion);
-
                         parsedRegion.setId(foundRegion.getId());
                     });
-
-            System.out.println(9);
         }
 
         Iterable<GasStation> gasStations = gasStationRepository.findAll();
 
-        System.out.println(10);
-
         if (!gasStations.iterator().hasNext()) {
-            System.out.println(11);
             gasStationRepository.saveAll(parsedResult.getGasStations());
-            System.out.println(12);
         } else {
-            System.out.println(13);
             Map<String, GasStation> gasStationsMap = new HashMap<>();
             gasStations.forEach(gasStation -> gasStationsMap.put(gasStation.getName(), gasStation));
-
-            System.out.println(14);
 
             parsedResult.getGasStations()
                     .forEach(parsedGasStation -> {
                         GasStation foundGasStation = gasStationsMap.get(parsedGasStation.getName());
                         parsedGasStation.setId(foundGasStation.getId());
                     });
-
-            System.out.println(15);
         }
-
         fuelInfoRepository.saveAll(parsedResult.getFuelInfoList());
-
-        System.out.println(16);
 
         return Optional.of(parsedResult.getFuelInfoList().size());
     }

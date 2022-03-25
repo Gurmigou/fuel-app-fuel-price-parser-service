@@ -5,9 +5,9 @@ spring:
    application:
       name: fuel-app-parser-service
    datasource:
-      url: jdbc:mysql://@eu-cdbr-west-02.cleardb.net/heroku_cbd789b3d0712cf?useUnicode=yes&characterEncoding=UTF-8
-      username: b18560def51940
-      password: ca4c1855
+      url: jdbc:mysql://@eu-cdbr-west-02.cleardb.net/heroku_6f95a0f6fbebff5?reconnect=true&useUnicode=yes&characterEncoding=UTF-8
+      username: b5c45663ded748
+      password: 4f013300
       driver-class-name: com.mysql.cj.jdbc.Driver
    jpa:
       hibernate:
