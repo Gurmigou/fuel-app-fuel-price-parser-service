@@ -9,20 +9,29 @@ import com.fueladvisor.fuelpriceparserservice.repository.FuelInfoRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.RegionRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.externalData.FuelDataParser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.core.io.Resource;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class FuelInfoService {
     private final FuelDataParser fuelDataParser;
     private final FuelInfoRepository fuelInfoRepository;
     private final GasStationRepository gasStationRepository;
     private final RegionRepository regionRepository;
+
+    @Value("classpath:logo")
+    private Resource logoResource;
 
     @Autowired
     public FuelInfoService(FuelDataParser fuelDataParser,
@@ -82,15 +91,123 @@ public class FuelInfoService {
 
         return fuelInfos.stream()
                 .map(this::mapToFuelInfoDto)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
-    private FuelInfoDto mapToFuelInfoDto(FuelInfo fuelInfo) {
-        return FuelInfoDto.builder()
-                .fuelType(fuelInfo.getFuelType().getName())
-                .region(fuelInfo.getRegion().getName())
-                .gasStation(fuelInfo.getGasStation().getName())
-                .price(fuelInfo.getPrice())
-                .build();
+    @Transactional
+    public List<FuelInfoDto> getFuelInfosInAllRegionsByGasStation(String gasStation) {
+        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationName(gasStation);
+
+        return fuelInfos.stream()
+                .map(this::mapToFuelInfoDto)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<FuelInfoDto> getFuelInfosByRegionLatinNameAndGasStationName(String regionLatin, String gasStation) {
+        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
+
+        return fuelInfos.stream()
+                .map(this::mapToFuelInfoDto)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    private String getGasStationLogoFilePath(String gasStationLogo) throws IOException {
+        log.info("logo resource object: {}", logoResource);
+        log.info("logo resource path: {}", logoResource.getFile().getAbsolutePath());
+
+        return logoResource.getFile().getAbsolutePath() + "/" + gasStationLogo;
+    }
+
+    private String getGasStationLogoName(String gasStation) {
+        String gasStationLogoName = "no_image.jpg";
+        switch (gasStation) {
+            case "Олас":
+                gasStationLogoName = "olas.jpg";
+                break;
+            case "БРСМ-Нафта":
+                gasStationLogoName = "brsm.jpg";
+                break;
+            case "Mango":
+                gasStationLogoName = "mango.jpg";
+                break;
+            case "Укрнафта":
+                gasStationLogoName = "ukr_nafta.jpg";
+                break;
+            case "UPG":
+                gasStationLogoName = "upg.jpg";
+                break;
+            case "Кворум":
+                gasStationLogoName = "kvorum.jpg";
+                break;
+            case "SOCAR":
+                gasStationLogoName = "socar.jpg";
+                break;
+            case "WOG":
+                gasStationLogoName = "wog.jpg";
+                break;
+            case "ОККО":
+                gasStationLogoName = "okko.jpg";
+                break;
+            case "Рур груп":
+                gasStationLogoName = "rur.jpg";
+                break;
+            case "Маркет":
+                gasStationLogoName = "market.jpg";
+                break;
+            case "Shell":
+                gasStationLogoName = "shell.jpg";
+                break;
+            case "Нефтек":
+                gasStationLogoName = "neftek.jpg";
+                break;
+            case "Укргаздобыча":
+                gasStationLogoName = "ukr_gaz.jpg";
+                break;
+            case "Фактор":
+                gasStationLogoName = "factor.jpg";
+                break;
+            case "Катрал":
+                gasStationLogoName = "katal.jpg";
+                break;
+            case "Автотранс":
+                gasStationLogoName = "auto_trans.jpg";
+                break;
+            case "Авиас":
+                gasStationLogoName = "avias.jpg";
+                break;
+        }
+        return gasStationLogoName;
+    }
+
+    private byte[] getLogoOfGasStation(String gasStation) throws IOException {
+        String gasStationLogoName = getGasStationLogoName(gasStation);
+        String gasStationLogoPath = getGasStationLogoFilePath(gasStationLogoName);
+
+        Base64.Encoder encoder = Base64.getEncoder();
+        return encoder.encode(Files.readAllBytes(Paths.get(gasStationLogoPath)));
+    }
+
+    private Optional<FuelInfoDto> mapToFuelInfoDto(FuelInfo fuelInfo) {
+        try {
+            return Optional.ofNullable(FuelInfoDto.builder()
+                    .id(fuelInfo.getId())
+                    .fuelType(fuelInfo.getFuelType().getName())
+                    .region(fuelInfo.getRegion().getName())
+                    .gasStation(fuelInfo.getGasStation().getName())
+                    .price(fuelInfo.getPrice())
+                    .logo(getLogoOfGasStation(fuelInfo.getGasStation().getName()))
+                    .build());
+        } catch (IOException e) {
+            log.warn("Can't get logo of gas station", e);
+            log.info("Can't get logo of gas station", e);
+            return Optional.empty();
+        }
     }
 }

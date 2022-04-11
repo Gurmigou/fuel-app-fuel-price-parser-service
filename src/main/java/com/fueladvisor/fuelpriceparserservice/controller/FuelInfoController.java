@@ -35,8 +35,22 @@ public class FuelInfoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FuelInfoDto>> getFuelInfoInRegion(@RequestParam String regionLatin) {
-        List<FuelInfoDto> fuelInfosDto = fuelInfoService.getFuelInfosInRegion(regionLatin);
-        return ResponseEntity.ok(fuelInfosDto);
+    public ResponseEntity<?> getFuelInfo(@RequestParam String regionLatin,
+                                         @RequestParam String gasStation) {
+        if (regionLatin == null && gasStation == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Parameters regionLatin and gasStation cannot be both null");
+        }
+        List<FuelInfoDto> fuelInfoDtos;
+
+        if (regionLatin != null && gasStation != null)
+            fuelInfoDtos = fuelInfoService.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
+        else if (regionLatin != null)
+             fuelInfoDtos = fuelInfoService.getFuelInfosInRegion(regionLatin);
+        else
+            fuelInfoDtos = fuelInfoService.getFuelInfosInAllRegionsByGasStation(gasStation);
+
+        return ResponseEntity.ok(fuelInfoDtos);
     }
 }
