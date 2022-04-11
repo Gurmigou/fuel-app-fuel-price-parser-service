@@ -8,6 +8,7 @@ public enum FuelType {
     A95("А95"),
     A92("А92"),
     DIESEL_FUEL("ДТ"),
+    DIESEL_FUEL_PLUS("ДТ+"),
     GAS("Газ");
 
     private final String name;

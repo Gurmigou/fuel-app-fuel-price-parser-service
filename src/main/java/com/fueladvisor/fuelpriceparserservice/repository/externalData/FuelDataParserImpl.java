@@ -20,7 +20,7 @@ import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.*;
 @Component
 public class FuelDataParserImpl implements FuelDataParser {
     private static final String URL = "https://index.minfin.com.ua/markets/fuel/detail/";
-    private static final List<FuelType> fuelTypes = Arrays.asList(A95_PLUS, A95, A92, DIESEL_FUEL, GAS);
+    private static final List<FuelType> fuelTypes = Arrays.asList(A95_PLUS, A95, A92, DIESEL_FUEL, DIESEL_FUEL_PLUS, GAS);
 
     private static final Map<String, String> regions = new HashMap<String, String>(){{
         put("Черкасская обл.", "Cherkas'ka oblast");
