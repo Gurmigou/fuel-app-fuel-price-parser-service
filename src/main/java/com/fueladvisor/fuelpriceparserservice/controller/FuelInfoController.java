@@ -35,8 +35,8 @@ public class FuelInfoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getFuelInfo(@RequestParam String regionLatin,
-                                         @RequestParam String gasStation) {
+    public ResponseEntity<?> getFuelInfo(@RequestParam(required = false) String regionLatin,
+                                         @RequestParam(required = false) String gasStation) {
         if (regionLatin == null && gasStation == null) {
             return ResponseEntity
                     .badRequest()
