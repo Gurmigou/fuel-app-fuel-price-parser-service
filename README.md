@@ -2,9 +2,11 @@
 ### About this microservice
 This microservice provides you with data of fuel information in Ukraine.
 The information you can get is:
+- id
 - name of the fuel
 - price
 - region of the fuel station
+- logo of the fuel station (base64 format)
 
 ### Source
 The source of the data is [there](https://index.minfin.com.ua/markets/fuel/detail/).
