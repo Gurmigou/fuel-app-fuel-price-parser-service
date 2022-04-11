@@ -2,9 +2,11 @@
 ### About this microservice
 This microservice provides you with data of fuel information in Ukraine.
 The information you can get is:
+- id
 - name of the fuel
 - price
 - region of the fuel station
+- logo of the fuel station (base64 format)
 
 ### Source
 The source of the data is [there](https://index.minfin.com.ua/markets/fuel/detail/).
@@ -18,21 +20,79 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/fuel-info?regionLatin="region_name_example"
+http://DOMAIN_NAME/api/v1/fuel-info?regionLatin=Kyivs'ka oblast
 ```
 **Response example:**
 ```jsonc
 [
     {
+        "id": 1,
         "region": "Киевская обл.",
         "fuelType": "А95+",
         "gasStation": "KLO",
-        "price": 34.09
+        "price": 34.09,
+        
+        "logo": [12, 45, 91, 57, 83, ...],
+        "logoContentType": "image/jpg"
     },
     ... 
 ]    
 ```
-
+### 2. Get information about the fuel of all regions by specified gas station name 
+**HTTP method**
+```
+GET
+```
+**URL**
+```
+http://DOMAIN_NAME/api/v1/fuel-info?gasStation=WOG
+```
+**Response example:**
+```jsonc
+[
+    {
+        "id": 1,
+        "region": "Киевская обл.",
+        "fuelType": "А95+",
+        "gasStation": "WOG",
+        "price": 36.85,
+        
+        "logo": [12, 45, 91, 57, 83, ...],
+        "logoContentType": "image/jpg"
+    },
+    ... 
+]    
+```
+### 3. Get information about the fuel of the specified gas station and in the specified region
+**HTTP method**
+```
+GET
+```
+**URL**
+```
+http://DOMAIN_NAME/api/v1/fuel-info?regionLatin=Kyivs'ka oblast&gasStation=WOG
+```
+**Response example:**
+```jsonc
+[
+    {
+        "id": 1,
+        "region": "Киевская обл.",
+        "fuelType": "А95+",
+        "gasStation": "WOG",
+        "price": 36.85,
+        
+        "logo": [12, 45, 91, 57, 83, ...],
+        "logoContentType": "image/jpg"
+    },
+    ... 
+]    
+```
+### Warning!
+If you don't specify any request parameters, you will recieve the following error:
+```
+Parameters regionLatin and gasStation cannot be both null
+```
 ---
 
 ### A list of available regions:
