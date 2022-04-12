@@ -88,34 +88,36 @@ public class FuelInfoService {
             regionLatin = "Kyivs'ka oblast";
 
         List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
-
-        return fuelInfos.stream()
-                .map(this::mapToFuelInfoDto)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        return null;
+//        return fuelInfos.stream()
+//                .map(this::mapToFuelInfoDto)
+//                .filter(Optional::isPresent)
+//                .map(Optional::get)
+//                .collect(Collectors.toList());
     }
 
     @Transactional
     public List<FuelInfoDto> getFuelInfosInAllRegionsByGasStation(String gasStation) {
         List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationName(gasStation);
-
-        return fuelInfos.stream()
-                .map(this::mapToFuelInfoDto)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        return null;
+//        return fuelInfos.stream()
+//                .map(this::mapToFuelInfoDto)
+//                .filter(Optional::isPresent)
+//                .map(Optional::get)
+//                .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<FuelInfoDto> getFuelInfosByRegionLatinNameAndGasStationName(String regionLatin, String gasStation) {
+    public List<FuelInfoDto> getFuelInfosByRegionLatinNameAndGasStationName(String regionLatin, String gasStation) throws IOException {
         List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
+        List<FuelInfoDto> fuelInfoDtos = new ArrayList<>();
 
-        return fuelInfos.stream()
-                .map(this::mapToFuelInfoDto)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        for (FuelInfo fuelInfo : fuelInfos) {
+            FuelInfoDto dto = mapToFuelInfoDto(fuelInfo);
+            fuelInfoDtos.add(dto);
+        }
+
+        return fuelInfoDtos;
     }
 
     private String getGasStationLogoFilePath(String gasStationLogo) throws IOException {
@@ -194,20 +196,14 @@ public class FuelInfoService {
         return encoder.encode(Files.readAllBytes(Paths.get(gasStationLogoPath)));
     }
 
-    private Optional<FuelInfoDto> mapToFuelInfoDto(FuelInfo fuelInfo) {
-        try {
-            return Optional.ofNullable(FuelInfoDto.builder()
-                    .id(fuelInfo.getId())
-                    .fuelType(fuelInfo.getFuelType().getName())
-                    .region(fuelInfo.getRegion().getName())
-                    .gasStation(fuelInfo.getGasStation().getName())
-                    .price(fuelInfo.getPrice())
-                    .logo(getLogoOfGasStation(fuelInfo.getGasStation().getName()))
-                    .build());
-        } catch (IOException e) {
-            log.warn("Can't get logo of gas station", e);
-            log.info("Can't get logo of gas station", e);
-            return Optional.empty();
-        }
+    private FuelInfoDto mapToFuelInfoDto(FuelInfo fuelInfo) throws IOException {
+        return FuelInfoDto.builder()
+                .id(fuelInfo.getId())
+                .fuelType(fuelInfo.getFuelType().getName())
+                .region(fuelInfo.getRegion().getName())
+                .gasStation(fuelInfo.getGasStation().getName())
+                .price(fuelInfo.getPrice())
+                .logo(getLogoOfGasStation(fuelInfo.getGasStation().getName()))
+                .build();
     }
 }

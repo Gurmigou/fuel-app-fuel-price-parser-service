@@ -42,15 +42,18 @@ public class FuelInfoController {
                     .badRequest()
                     .body("Parameters regionLatin and gasStation cannot be both null");
         }
-        List<FuelInfoDto> fuelInfoDtos;
+        try {
+            List<FuelInfoDto> fuelInfoDtos;
 
-        if (regionLatin != null && gasStation != null)
-            fuelInfoDtos = fuelInfoService.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
-        else if (regionLatin != null)
-             fuelInfoDtos = fuelInfoService.getFuelInfosInRegion(regionLatin);
-        else
-            fuelInfoDtos = fuelInfoService.getFuelInfosInAllRegionsByGasStation(gasStation);
-
-        return ResponseEntity.ok(fuelInfoDtos);
+            if (regionLatin != null && gasStation != null)
+                fuelInfoDtos = fuelInfoService.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
+            else if (regionLatin != null)
+                fuelInfoDtos = fuelInfoService.getFuelInfosInRegion(regionLatin);
+            else
+                fuelInfoDtos = fuelInfoService.getFuelInfosInAllRegionsByGasStation(gasStation);
+            return ResponseEntity.ok(fuelInfoDtos);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e);
+        }
     }
 }
