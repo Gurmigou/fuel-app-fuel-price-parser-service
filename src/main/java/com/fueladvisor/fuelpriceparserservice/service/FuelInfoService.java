@@ -122,7 +122,7 @@ public class FuelInfoService {
         log.info("logo resource object: {}", logoResource);
         log.info("logo resource path: {}", logoResource.getFile().getAbsolutePath());
 
-        return logoResource.getFile().getAbsolutePath() + "/" + gasStationLogo;
+        return logoResource.getFile().getAbsolutePath() + "\\" + gasStationLogo;
     }
 
     private String getGasStationLogoName(String gasStation) {
