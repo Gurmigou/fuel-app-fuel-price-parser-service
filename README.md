@@ -181,7 +181,7 @@ Parameters regionLatin and gasStation cannot be both null
 <li>Chernivets'ka oblast, Черновицкая обл.</li>
 </ol>    
 
-### A list of ras station mapping:
+### A list of gas station mapping:
 <ol>
 <li>auto_trans, Автотранс</li>
 <li>avias. Авиас</li>
