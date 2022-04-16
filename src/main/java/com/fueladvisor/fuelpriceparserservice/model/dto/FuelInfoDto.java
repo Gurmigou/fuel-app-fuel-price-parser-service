@@ -2,16 +2,14 @@ package com.fueladvisor.fuelpriceparserservice.model.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 public class FuelInfoDto {
-    private Integer id;
+    private String gasStationId;
+    private String gasStationName;
     private String region;
-    private String fuelType;
-    private String gasStation;
-    private Double price;
-
-    private byte[] logo;
-    private final String logoContentType = "image/jpg";
+    private List<FuelPriceDto> fuelPrices;
 }

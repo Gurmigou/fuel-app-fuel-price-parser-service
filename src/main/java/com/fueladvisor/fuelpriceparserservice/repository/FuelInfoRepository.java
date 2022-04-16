@@ -13,22 +13,25 @@ public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
     @Query("FROM FuelInfo fi " +
            "INNER JOIN FETCH fi.gasStation gs " +
            "INNER JOIN FETCH fi.region r " +
-           "WHERE r.latinName = :regionLatin"
+           "WHERE r.latinName = :regionLatinName " +
+           "ORDER BY gs.id, fi.fuelType"
     )
-    List<FuelInfo> getFuelInfosByRegionLatinName(@Param("regionLatin") String regionLatin);
+    List<FuelInfo> getFuelInfosByRegionLatinName(@Param("regionLatinName") String regionLatinName);
 
     @Query("FROM FuelInfo fi " +
            "INNER JOIN FETCH fi.gasStation gs " +
            "INNER JOIN FETCH fi.region r " +
-           "WHERE gs.name = :name"
+           "WHERE gs.id = :gasStationId " +
+           "ORDER BY r.id, fi.fuelType"
     )
-    List<FuelInfo> getFuelInfosByGasStationName(@Param("name") String name);
+    List<FuelInfo> getFuelInfosByGasStationName(@Param("gasStationId") String gasStationId);
 
     @Query("FROM FuelInfo fi " +
            "INNER JOIN FETCH fi.gasStation gs " +
            "INNER JOIN FETCH fi.region r " +
-           "WHERE r.latinName = :regionLatin AND gs.name = :name"
+           "WHERE r.latinName = :regionLatin AND gs.id = :gasStationId " +
+           "ORDER BY fi.fuelType"
     )
     List<FuelInfo> getFuelInfosByRegionLatinNameAndGasStationName(@Param("regionLatin") String regionLatin,
-                                                                  @Param("name") String name);
+                                                                  @Param("gasStationId") String gasStationId);
 }

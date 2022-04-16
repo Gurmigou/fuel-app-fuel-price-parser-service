@@ -1,7 +1,9 @@
 package com.fueladvisor.fuelpriceparserservice.controller;
 
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
+import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
 import com.fueladvisor.fuelpriceparserservice.service.FuelInfoService;
+import com.fueladvisor.fuelpriceparserservice.service.FuelInfoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,34 +38,32 @@ public class FuelInfoController {
 
     @GetMapping
     public ResponseEntity<?> getFuelInfo(@RequestParam(required = false) String regionLatin,
-                                         @RequestParam(required = false) String gasStation) {
-        System.out.println(1);
-        if (regionLatin == null && gasStation == null) {
+                                         @RequestParam(required = false) String gasStationId) {
+        if (regionLatin == null && gasStationId == null) {
             return ResponseEntity
                     .badRequest()
                     .body("Parameters regionLatin and gasStation cannot be both null");
         }
-        System.out.println(2);
         try {
-            List<FuelInfoDto> fuelInfoDtos;
-            System.out.println(3);
-            if (regionLatin != null && gasStation != null) {
-                System.out.println(4);
-                fuelInfoDtos = fuelInfoService.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
-            }
-            else if (regionLatin != null) {
-                System.out.println(5);
-                fuelInfoDtos = fuelInfoService.getFuelInfosInRegion(regionLatin);
-            }
-            else {
-                System.out.println(6);
-                fuelInfoDtos = fuelInfoService.getFuelInfosInAllRegionsByGasStation(gasStation);
-            }
-
-            System.out.println(7 + ": " + fuelInfoDtos);
-            return ResponseEntity.ok(fuelInfoDtos);
+            Object response;
+            if (regionLatin != null && gasStationId != null)
+                response = fuelInfoService.getFuelInfosByRegionLatinNameAndGasStationId(regionLatin, gasStationId);
+            else if (regionLatin != null)
+                response = fuelInfoService.getFuelInfosInRegion(regionLatin);
+            else
+                response = fuelInfoService.getFuelInfosInAllRegionsByGasStationId(gasStationId);
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
-            System.out.println(8);
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @GetMapping("/logo")
+    public ResponseEntity<?> getGasStationLogo(@RequestParam String gasStationId) {
+        try {
+            GasStationLogoDto gasStationLogo = fuelInfoService.getGasStationLogoById(gasStationId);
+            return ResponseEntity.ok(gasStationLogo);
+        } catch (IOException e) {
             return ResponseEntity.badRequest().body(e);
         }
     }

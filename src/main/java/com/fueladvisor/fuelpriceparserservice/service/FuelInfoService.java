@@ -2,6 +2,8 @@ package com.fueladvisor.fuelpriceparserservice.service;
 
 import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
+import com.fueladvisor.fuelpriceparserservice.model.dto.FuelPriceDto;
+import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
 import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
 import com.fueladvisor.fuelpriceparserservice.model.entity.GasStation;
 import com.fueladvisor.fuelpriceparserservice.model.entity.Region;
@@ -19,6 +21,8 @@ import org.springframework.util.FileCopyUtils;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -83,80 +87,42 @@ public class FuelInfoService {
             regionLatin = "Kyivs'ka oblast";
 
         List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinName(regionLatin);
-        return mapFuelInfoListToDtoList(fuelInfos);
+        return aggregateAndMapFuelInfos(fuelInfos, (prev, cur) ->
+                !Objects.equals(prev.getGasStation().getId(), cur.getGasStation().getId()));
     }
 
     @Transactional
-    public List<FuelInfoDto> getFuelInfosInAllRegionsByGasStation(String gasStation) throws IOException {
-        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationName(gasStation);
-        return mapFuelInfoListToDtoList(fuelInfos);
+    public List<FuelInfoDto> getFuelInfosInAllRegionsByGasStationId(String gasStationId) throws IOException {
+        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationName(gasStationId);
+        return aggregateAndMapFuelInfos(fuelInfos, (prev, cur) ->
+                !Objects.equals(prev.getRegion().getId(), cur.getRegion().getId()));
     }
 
     @Transactional
-    public List<FuelInfoDto> getFuelInfosByRegionLatinNameAndGasStationName(String regionLatin, String gasStation) throws IOException {
-        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStation);
-        return mapFuelInfoListToDtoList(fuelInfos);
+    public FuelInfoDto getFuelInfosByRegionLatinNameAndGasStationId(
+            String regionLatin, String gasStationId) throws IOException {
+
+        List<FuelInfo> fuelInfos = fuelInfoRepository
+                .getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStationId);
+
+        List<FuelPriceDto> fuelPriceDtoList = fuelInfos
+                .stream()
+                .map(fuelInfo -> new FuelPriceDto(fuelInfo.getFuelType().getName(), fuelInfo.getPrice()))
+                .collect(Collectors.toList());
+
+        return fuelInfos.isEmpty() ? null : mapToFuelInfoDto(fuelInfos.get(0), fuelPriceDtoList);
     }
 
-    private String getGasStationLogoName(String gasStation) {
-        String gasStationLogoName = "no_image.jpg";
-        switch (gasStation) {
-            case "Олас":
-                gasStationLogoName = "olas.jpg";
-                break;
-            case "БРСМ-Нафта":
-                gasStationLogoName = "brsm.jpg";
-                break;
-            case "Mango":
-                gasStationLogoName = "mango.jpg";
-                break;
-            case "Укрнафта":
-                gasStationLogoName = "ukr_nafta.jpg";
-                break;
-            case "UPG":
-                gasStationLogoName = "upg.jpg";
-                break;
-            case "Кворум":
-                gasStationLogoName = "kvorum.jpg";
-                break;
-            case "SOCAR":
-                gasStationLogoName = "socar.jpg";
-                break;
-            case "WOG":
-                gasStationLogoName = "wog.jpg";
-                break;
-            case "ОККО":
-                gasStationLogoName = "okko.jpg";
-                break;
-            case "Рур груп":
-                gasStationLogoName = "rur.jpg";
-                break;
-            case "Маркет":
-                gasStationLogoName = "market.jpg";
-                break;
-            case "Shell":
-                gasStationLogoName = "shell.jpg";
-                break;
-            case "Нефтек":
-                gasStationLogoName = "neftek.jpg";
-                break;
-            case "Укргаздобыча":
-                gasStationLogoName = "ukr_gaz.jpg";
-                break;
-            case "Фактор":
-                gasStationLogoName = "factor.jpg";
-                break;
-            case "Катрал":
-                gasStationLogoName = "katal.jpg";
-                break;
-            case "Автотранс":
-                gasStationLogoName = "auto_trans.jpg";
-                break;
-            case "Авиас":
-                gasStationLogoName = "avias.jpg";
-                break;
-        }
-        return gasStationLogoName;
+    public GasStationLogoDto getGasStationLogoById(String gasStationId) throws IOException {
+        String imageName = getGasStationImageName(gasStationId);
+        byte[] logo = readLogoImage(imageName);
+        return new GasStationLogoDto(gasStationId, logo, FuelInfoUtil.isGasStationExists(gasStationId));
+    }
+
+    private String getGasStationImageName(String gasStationId) {
+        return FuelInfoUtil.isGasStationExists(gasStationId)
+                ? gasStationId + ".jpg"
+                : "no_image.jpg";
     }
 
     private byte[] readLogoImage(String gasStationLogoName) throws IOException {
@@ -164,33 +130,38 @@ public class FuelInfoService {
         return FileCopyUtils.copyToByteArray(resource.getInputStream());
     }
 
-    private byte[] getBase64LogoOfGasStation(String gasStation) throws IOException {
-        String gasStationLogoName = getGasStationLogoName(gasStation);
-        byte[] img = readLogoImage(gasStationLogoName);
+    private List<FuelInfoDto> aggregateAndMapFuelInfos(List<FuelInfo> fuelInfos,
+                                                       BiPredicate<FuelInfo, FuelInfo> biPredicate) {
 
-        Base64.Encoder encoder = Base64.getEncoder();
-        return encoder.encode(img);
-    }
-
-    private List<FuelInfoDto> mapFuelInfoListToDtoList(List<FuelInfo> fuelInfos) throws IOException {
         List<FuelInfoDto> fuelInfoDtoList = new ArrayList<>();
 
+        FuelInfo prev = null;
+        List<FuelPriceDto> fuelPriceDtoList = new ArrayList<>();
         for (FuelInfo fuelInfo : fuelInfos) {
-            FuelInfoDto dto = mapToFuelInfoDto(fuelInfo);
-            fuelInfoDtoList.add(dto);
+            if (prev != null) {
+                if (biPredicate.test(prev, fuelInfo)) {
+                    fuelInfoDtoList.add(mapToFuelInfoDto(prev, fuelPriceDtoList));
+                    fuelPriceDtoList = new ArrayList<>();
+                }
+            }
+            fuelPriceDtoList.add(new FuelPriceDto(fuelInfo.getFuelType().getName(), fuelInfo.getPrice()));
+            prev = fuelInfo;
+        }
+
+        if (prev != null) {
+            fuelInfoDtoList.add(mapToFuelInfoDto(prev, fuelPriceDtoList));
         }
 
         return fuelInfoDtoList;
     }
 
-    private FuelInfoDto mapToFuelInfoDto(FuelInfo fuelInfo) throws IOException {
-        return FuelInfoDto.builder()
-                .id(fuelInfo.getId())
-                .fuelType(fuelInfo.getFuelType().getName())
+    private FuelInfoDto mapToFuelInfoDto(FuelInfo fuelInfo, List<FuelPriceDto> fuelPriceDtoList) {
+        return FuelInfoDto
+                .builder()
+                .gasStationId(fuelInfo.getGasStation().getId())
+                .gasStationName(fuelInfo.getGasStation().getName())
                 .region(fuelInfo.getRegion().getName())
-                .gasStation(fuelInfo.getGasStation().getName())
-                .price(fuelInfo.getPrice())
-                .logo(getBase64LogoOfGasStation(fuelInfo.getGasStation().getName()))
+                .fuelPrices(fuelPriceDtoList)
                 .build();
     }
 }
