@@ -183,7 +183,7 @@ Parameters regionLatin and gasStation cannot be both null
 
 ### A list of gas station mapping:
 <ol>
-<li>auto_trans, Автотранс</li>
+<li>autotrans, Автотранс</li>
 <li>avias. Авиас</li>
 <li>brsm, БРСМ-Нафта</li>
 <li>factor, Фактор</li>
