@@ -24,7 +24,7 @@ public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
            "WHERE gs.id = :gasStationId " +
            "ORDER BY r.id, fi.fuelType"
     )
-    List<FuelInfo> getFuelInfosByGasStationName(@Param("gasStationId") String gasStationId);
+    List<FuelInfo> getFuelInfosByGasStationId(@Param("gasStationId") String gasStationId);
 
     @Query("FROM FuelInfo fi " +
            "INNER JOIN FETCH fi.gasStation gs " +
@@ -32,6 +32,11 @@ public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
            "WHERE r.latinName = :regionLatin AND gs.id = :gasStationId " +
            "ORDER BY fi.fuelType"
     )
-    List<FuelInfo> getFuelInfosByRegionLatinNameAndGasStationName(@Param("regionLatin") String regionLatin,
-                                                                  @Param("gasStationId") String gasStationId);
+    List<FuelInfo> getFuelInfosByRegionLatinNameAndGasStationId(@Param("regionLatin") String regionLatin,
+                                                                @Param("gasStationId") String gasStationId);
+
+    @Query("SELECT AVG(fi.price) FROM FuelInfo fi " +
+           "INNER JOIN fi.gasStation gs " +
+           "WHERE gs.id = :gasStationId")
+    Double getAverageAllTypesFuelPriceByGasStationId(@Param("gasStationId") String gasStationId);
 }

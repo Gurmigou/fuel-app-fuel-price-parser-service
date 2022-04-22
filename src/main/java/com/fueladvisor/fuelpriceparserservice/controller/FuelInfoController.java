@@ -1,15 +1,14 @@
 package com.fueladvisor.fuelpriceparserservice.controller;
 
-import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
+import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationDetailsDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
+import com.fueladvisor.fuelpriceparserservice.model.entity.GasStationDetails;
 import com.fueladvisor.fuelpriceparserservice.service.FuelInfoService;
-import com.fueladvisor.fuelpriceparserservice.service.FuelInfoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -63,6 +62,26 @@ public class FuelInfoController {
         try {
             GasStationLogoDto gasStationLogo = fuelInfoService.getGasStationLogoById(gasStationId);
             return ResponseEntity.ok(gasStationLogo);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<?> getGasStationDetails(@RequestParam String gasStationId) {
+        try {
+            GasStationDetailsDto gasStationDetails = fuelInfoService.getGasStationDetails(gasStationId);
+            return ResponseEntity.ok(gasStationDetails);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(e);
+        }
+    }
+
+    @PutMapping("/details")
+    public ResponseEntity<?> updateGasStationDetails(@RequestBody GasStationDetailsDto gasStationDetailsDto) {
+        try {
+            GasStationDetails gasStationDetails = fuelInfoService.updateGasStationDetails(gasStationDetailsDto);
+            return ResponseEntity.ok(gasStationDetails);
         } catch (IOException e) {
             return ResponseEntity.badRequest().body(e);
         }

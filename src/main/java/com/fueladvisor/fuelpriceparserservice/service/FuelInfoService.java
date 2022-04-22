@@ -3,11 +3,14 @@ package com.fueladvisor.fuelpriceparserservice.service;
 import com.fueladvisor.fuelpriceparserservice.model.FuelDataParsedResult;
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelPriceDto;
+import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationDetailsDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
 import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
 import com.fueladvisor.fuelpriceparserservice.model.entity.GasStation;
+import com.fueladvisor.fuelpriceparserservice.model.entity.GasStationDetails;
 import com.fueladvisor.fuelpriceparserservice.model.entity.Region;
 import com.fueladvisor.fuelpriceparserservice.repository.FuelInfoRepository;
+import com.fueladvisor.fuelpriceparserservice.repository.GasStationDetailsRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.RegionRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.externalData.FuelDataParser;
@@ -31,19 +34,22 @@ public class FuelInfoService {
     private final FuelInfoRepository fuelInfoRepository;
     private final GasStationRepository gasStationRepository;
     private final RegionRepository regionRepository;
+    private final GasStationDetailsRepository gasStationDetailsRepository;
 
     @Autowired
     public FuelInfoService(FuelDataParser fuelDataParser,
                            FuelInfoRepository fuelInfoRepository,
                            GasStationRepository gasStationRepository,
-                           RegionRepository regionRepository) {
+                           RegionRepository regionRepository,
+                           GasStationDetailsRepository gasStationDetailsRepository) {
         this.fuelDataParser = fuelDataParser;
         this.fuelInfoRepository = fuelInfoRepository;
         this.gasStationRepository = gasStationRepository;
         this.regionRepository = regionRepository;
+        this.gasStationDetailsRepository = gasStationDetailsRepository;
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public Optional<Integer> updateFuelData() throws IOException {
         FuelDataParsedResult parsedResult = fuelDataParser.parseFuelData();
 
@@ -81,7 +87,7 @@ public class FuelInfoService {
         return Optional.of(parsedResult.getFuelInfoList().size());
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public List<FuelInfoDto> getFuelInfosInRegion(String regionLatin) throws IOException {
         if (Objects.equals(regionLatin, "Kyiv City"))
             regionLatin = "Kyivs'ka oblast";
@@ -91,19 +97,19 @@ public class FuelInfoService {
                 !Objects.equals(prev.getGasStation().getId(), cur.getGasStation().getId()));
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public List<FuelInfoDto> getFuelInfosInAllRegionsByGasStationId(String gasStationId) throws IOException {
-        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationName(gasStationId);
+        List<FuelInfo> fuelInfos = fuelInfoRepository.getFuelInfosByGasStationId(gasStationId);
         return aggregateAndMapFuelInfos(fuelInfos, (prev, cur) ->
                 !Objects.equals(prev.getRegion().getId(), cur.getRegion().getId()));
     }
 
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public FuelInfoDto getFuelInfosByRegionLatinNameAndGasStationId(
             String regionLatin, String gasStationId) throws IOException {
 
         List<FuelInfo> fuelInfos = fuelInfoRepository
-                .getFuelInfosByRegionLatinNameAndGasStationName(regionLatin, gasStationId);
+                .getFuelInfosByRegionLatinNameAndGasStationId(regionLatin, gasStationId);
 
         List<FuelPriceDto> fuelPriceDtoList = fuelInfos
                 .stream()
@@ -117,6 +123,22 @@ public class FuelInfoService {
         String imageName = getGasStationImageName(gasStationId);
         byte[] logo = readLogoImage(imageName);
         return new GasStationLogoDto(gasStationId, logo, FuelInfoUtil.isGasStationExists(gasStationId));
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    public GasStationDetailsDto getGasStationDetails(String gasStationId) throws IOException {
+        GasStationDetails gasStationDetails = gasStationDetailsRepository
+                .findByGasStationId(gasStationId)
+                .orElseThrow(() -> new IOException("Gas station with id " + gasStationId + " not found."));
+
+        Double averageFuelPrice = fuelInfoRepository.getAverageAllTypesFuelPriceByGasStationId(gasStationId);
+
+        return GasStationDetailsDto.builder()
+                .gasStationId(gasStationId)
+                .email(gasStationDetails.getEmail())
+                .phoneNumber(gasStationDetails.getPhoneNumber())
+                .averageFuelPrice(averageFuelPrice)
+                .build();
     }
 
     private String getGasStationImageName(String gasStationId) {
@@ -163,5 +185,23 @@ public class FuelInfoService {
                 .region(fuelInfo.getRegion().getName())
                 .fuelPrices(fuelPriceDtoList)
                 .build();
+    }
+
+    public GasStationDetails updateGasStationDetails(GasStationDetailsDto gasStationDetailsDto) throws IOException {
+        String gasStationId = gasStationDetailsDto.getGasStationId();
+
+        GasStation gasStation = gasStationRepository
+                .findById(gasStationId)
+                .orElseThrow(() -> new IOException("Gas station with id " + gasStationId + " not found."));
+
+        GasStationDetails gasStationDetails = gasStationDetailsRepository
+                .findByGasStationId(gasStationId)
+                .orElseGet(GasStationDetails::new);
+
+        gasStationDetails.setGasStation(gasStation);
+        gasStationDetails.setEmail(gasStationDetailsDto.getEmail());
+        gasStationDetails.setPhoneNumber(gasStationDetailsDto.getPhoneNumber());
+
+        return gasStationDetailsRepository.save(gasStationDetails);
     }
 }

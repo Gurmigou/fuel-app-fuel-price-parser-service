@@ -28,7 +28,7 @@ public class FuelInfoUtil {
         put("Укргаздобыча", "urk_gaz");
         put("Фактор", "factor");
         put("Катрал", "katral");
-        put("Автотранс", "auto_trans");
+        put("Автотранс", "autotrans");
         put("Авиас", "avias");
         put("Кворум", "kvorum");
         put("Mango", "mango");

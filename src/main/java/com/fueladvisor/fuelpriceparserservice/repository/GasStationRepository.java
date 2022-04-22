@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface GasStationRepository extends CrudRepository<GasStation, Integer> {
+public interface GasStationRepository extends CrudRepository<GasStation, String> {
     Optional<GasStation> findByName(String name);
 }
