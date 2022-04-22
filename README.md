@@ -26,17 +26,41 @@ http://DOMAIN_NAME/api/v1/fuel-info?regionLatin=Kyivs'ka oblast
 ```jsonc
 [
     {
-        "id": 1,
+        "gasStationId": "avias",
+        "gasStationName": "Авиас",
         "region": "Киевская обл.",
-        "fuelType": "А95+",
-        "gasStation": "KLO",
-        "price": 34.09,
-        
-        "logo": [12, 45, 91, 57, 83, ...],
-        "logoContentType": "image/jpg"
+        "fuelPrices": [
+            {
+                "fuelType": "А95+",
+                "price": 34.0
+            },
+            {
+                "fuelType": "А92",
+                "price": 33.0
+            },
+            {
+                "fuelType": "ДТ",
+                "price": 37.5
+            },
+            {
+                "fuelType": "Газ",
+                "price": 27.37
+            }
+        ]
     },
-    ... 
-]    
+    {
+        "gasStationId": "brsm",
+        "gasStationName": "БРСМ-Нафта",
+        "region": "Киевская обл.",
+        "fuelPrices": [
+            {
+                "fuelType": "ДТ",
+                "price": 39.49
+            }
+        ]
+    },
+    ...
+]
 ```
 ### 2. Get information about the fuel of all regions by specified gas station name 
 **HTTP method**
@@ -45,22 +69,50 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/fuel-info?gasStation=WOG
+http://DOMAIN_NAME/api/v1/fuel-info?gasStationId=wog
 ```
 **Response example:**
 ```jsonc
 [
     {
-        "id": 1,
-        "region": "Киевская обл.",
-        "fuelType": "А95+",
-        "gasStation": "WOG",
-        "price": 36.85,
-        
-        "logo": [12, 45, 91, 57, 83, ...],
-        "logoContentType": "image/jpg"
+        "gasStationId": "wog",
+        "gasStationName": "WOG",
+        "region": "Одесская обл.",
+        "fuelPrices": [
+            {
+                "fuelType": "А95+",
+                "price": 33.87
+            },
+            {
+                "fuelType": "А92",
+                "price": 33.77
+            },
+            {
+                "fuelType": "ДТ",
+                "price": 37.65
+            }
+        ]
     },
-    ... 
+    {
+        "gasStationId": "wog",
+        "gasStationName": "WOG",
+        "region": "Закарпатская обл.",
+        "fuelPrices": [
+            {
+                "fuelType": "А95+",
+                "price": 33.87
+            },
+            {
+                "fuelType": "А92",
+                "price": 33.77
+            },
+            {
+                "fuelType": "ДТ",
+                "price": 37.65
+            }
+        ]
+    },
+    ...
 ]    
 ```
 ### 3. Get information about the fuel of the specified gas station and in the specified region
@@ -70,23 +122,29 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/fuel-info?regionLatin=Kyivs'ka oblast&gasStation=WOG
+http://DOMAIN_NAME/api/v1/fuel-info?regionLatin=Kyivs'ka oblast&gasStationId=wog
 ```
 **Response example:**
 ```jsonc
-[
-    {
-        "id": 1,
-        "region": "Киевская обл.",
-        "fuelType": "А95+",
-        "gasStation": "WOG",
-        "price": 36.85,
-        
-        "logo": [12, 45, 91, 57, 83, ...],
-        "logoContentType": "image/jpg"
-    },
-    ... 
-]    
+{
+    "gasStationId": "wog",
+    "gasStationName": "WOG",
+    "region": "Киевская обл.",
+    "fuelPrices": [
+        {
+            "fuelType": "А95+",
+            "price": 33.87
+        },
+        {
+            "fuelType": "А92",
+            "price": 33.77
+        },
+        {
+            "fuelType": "ДТ",
+            "price": 37.65
+        }
+    ]
+}  
 ```
 ### Warning!
 If you don't specify any request parameters, you will recieve the following error:
@@ -121,4 +179,26 @@ Parameters regionLatin and gasStation cannot be both null
 <li>Cherkas'ka oblast, Черкасская обл.</li>
 <li>Chernihivs'ka oblast, Черниговская обл.</li>
 <li>Chernivets'ka oblast, Черновицкая обл.</li>
+</ol>    
+
+### A list of gas station mapping:
+<ol>
+<li>autotrans, Автотранс</li>
+<li>avias. Авиас</li>
+<li>brsm, БРСМ-Нафта</li>
+<li>factor, Фактор</li>
+<li>katral, Катрал</li>
+<li>mango, Mango</li>
+<li>market, Маркет</li>
+<li>neftek, Нефтек</li>
+<li>okko, ОККО</li>
+<li>olas, Олас</li>
+<li>rur, Рур груп</li>
+<li>shell, Shell</li>
+<li>socar, SOCAR</li>
+<li>ukr_nafta, Укрнафта</li>
+<li>upg, UPG</li>
+<li>urk_gaz, Укргаздобыча</li>
+<li>urk_petrol, Укр-Петроль</li>
+<li>wog, WOG</li>
 </ol>    
