@@ -177,18 +177,70 @@ http://DOMAIN_NAME/api/v1/details?gasStationId=wog
 ```jsonc
 {
     "gasStationId": "wog",
+    "gasStationName": "WOG",
     "email": null,
     "phoneNumber": "0 800 300 525",
-    "averageFuelPrice": 35.12999999999998
-} 
+    "averagePriceList": [
+        {
+            "fuelType": "А92",
+            "price": 33.87
+        },
+        {
+            "fuelType": "А95",
+            "price": 0.0
+        },
+        {
+            "fuelType": "А95+",
+            "price": 33.87
+        },
+        {
+            "fuelType": "ДТ",
+            "price": 37.649999999999984
+        },
+        {
+            "fuelType": "ДТ+",
+            "price": 0.0
+        },
+        {
+            "fuelType": "Газ",
+            "price": 0.0
+        }
+    ]
+}
 ```
 another example (gasStationId=socar)
 ```jsonc
 {
     "gasStationId": "socar",
+    "gasStationName": "SOCAR",
     "email": "info@socar.ua",
     "phoneNumber": "0 (800) 50 85 85",
-    "averageFuelPrice": 39.48
+    "averagePriceList": [
+        {
+            "fuelType": "А92",
+            "price": 0.0
+        },
+        {
+            "fuelType": "А95",
+            "price": 0.0
+        },
+        {
+            "fuelType": "А95+",
+            "price": 0.0
+        },
+        {
+            "fuelType": "ДТ",
+            "price": 39.48
+        },
+        {
+            "fuelType": "ДТ+",
+            "price": 0.0
+        },
+        {
+            "fuelType": "Газ",
+            "price": 0.0
+        }
+    ]
 }
 ```
 ---
