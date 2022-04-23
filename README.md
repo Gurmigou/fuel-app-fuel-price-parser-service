@@ -151,7 +151,7 @@ If you don't specify any request parameters, you will recieve the following erro
 ```
 Parameters regionLatin and gasStation cannot be both null
 ```
-### 4. Get logo as an array of bytes (.jpg) of the specified gas station
+### 4. Get logo as an array of bytes (.jpeg) of the specified gas station
 **HTTP method**
 ```
 GET
@@ -160,19 +160,9 @@ GET
 ```
 http://DOMAIN_NAME/api/v1/logo?gasStationId=wog
 ```
-**Note**
-```
-"exists" is true when the gas station exists
-"exists" is false when the gas station doesn't exist
-```
 **Response example:**
 ```jsonc
-{
-    "gasStationId": "wog",
-    "img": "/9j/4AAQSkZJRgABAQAAAQABAAD//gAfQ29tcHJlc3NlZCBieSBqcGVnLXJlY29tcH ..."
-    "logoContentType": "image/jpg",
-    "exists": true
-}    
+An image which has image/jpeg type 
 ```
 ### 5. Get details of the specified gas station
 **HTTP method**
