@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.*;
-import static com.fueladvisor.fuelpriceparserservice.model.entity.FuelType.GAS;
 
 public class FuelInfoUtil {
     public static final Map<String, String> gasStationMapping = new HashMap<String, String>() {{
@@ -59,6 +58,27 @@ public class FuelInfoUtil {
         put("Запорожская обл.", "Zaporiz'ka oblast");
         put("Житомирская обл.", "Zhytomyrs'ka oblast");
         put("Закарпатская обл.", "Zakarpats'ka oblast'");
+    }};
+
+    public static Map<String, List<String>> details = new HashMap<String, List<String>>() {{
+        put("autotrans", Arrays.asList("+38 050-305-43-08", "office@autotrans.ua"));
+        put("avias", Arrays.asList("0-800-501-788", "null"));
+        put("okko", Arrays.asList("0 800 501 101", "null"));
+        put("brsm", Arrays.asList("0 800 303 404", "info@brsm-nafta.com.ua"));
+        put("factor", Arrays.asList("", ""));
+        put("katral", Arrays.asList("+380 482 397 046", ""));
+        put("mango", Arrays.asList("+38 044 528 0111", "info@ultraoil.com.ua"));
+        put("neftek", Arrays.asList("0-800-75-70-05", "hotline@neftek.ua"));
+        put("olas", Arrays.asList("+38 (0362) 68-33-50", ""));
+        put("rur", Arrays.asList("", ""));
+        put("shell", Arrays.asList("0 800 500 423", "info.shell@acc.com.ua"));
+        put("socar", Arrays.asList("0 (800) 50 85 85", "info@socar.ua"));
+        put("ukr_nafta", Arrays.asList("0 800 404 000", "hotline@ukrnafta.com"));
+        put("upg", Arrays.asList("0 800 500 064", ""));
+        put("urk_gaz", Arrays.asList("", ""));
+        put("urk_petrol", Arrays.asList("(03342) 2-08-76", "ukrpetrol@gmail.com"));
+        put("market", Arrays.asList("", "info@azs-market.com.ua"));
+        put("wog", Arrays.asList("0 800 300 525", ""));
     }};
 
     public static boolean isGasStationExists(String gasStationId) {

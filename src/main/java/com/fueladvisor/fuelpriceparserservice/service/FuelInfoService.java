@@ -141,6 +141,25 @@ public class FuelInfoService {
                 .build();
     }
 
+    @Transactional(rollbackOn = Exception.class)
+    public GasStationDetails updateGasStationDetails(GasStationDetailsDto gasStationDetailsDto) throws IOException {
+        String gasStationId = gasStationDetailsDto.getGasStationId();
+
+        GasStation gasStation = gasStationRepository
+                .findById(gasStationId)
+                .orElseThrow(() -> new IOException("Gas station with id " + gasStationId + " not found."));
+
+        GasStationDetails gasStationDetails = gasStationDetailsRepository
+                .findByGasStationId(gasStationId)
+                .orElseGet(GasStationDetails::new);
+
+        gasStationDetails.setGasStation(gasStation);
+        gasStationDetails.setEmail(gasStationDetailsDto.getEmail());
+        gasStationDetails.setPhoneNumber(gasStationDetailsDto.getPhoneNumber());
+
+        return gasStationDetailsRepository.save(gasStationDetails);
+    }
+
     private String getGasStationImageName(String gasStationId) {
         return FuelInfoUtil.isGasStationExists(gasStationId)
                 ? gasStationId + ".jpg"
@@ -185,23 +204,5 @@ public class FuelInfoService {
                 .region(fuelInfo.getRegion().getName())
                 .fuelPrices(fuelPriceDtoList)
                 .build();
-    }
-
-    public GasStationDetails updateGasStationDetails(GasStationDetailsDto gasStationDetailsDto) throws IOException {
-        String gasStationId = gasStationDetailsDto.getGasStationId();
-
-        GasStation gasStation = gasStationRepository
-                .findById(gasStationId)
-                .orElseThrow(() -> new IOException("Gas station with id " + gasStationId + " not found."));
-
-        GasStationDetails gasStationDetails = gasStationDetailsRepository
-                .findByGasStationId(gasStationId)
-                .orElseGet(GasStationDetails::new);
-
-        gasStationDetails.setGasStation(gasStation);
-        gasStationDetails.setEmail(gasStationDetailsDto.getEmail());
-        gasStationDetails.setPhoneNumber(gasStationDetailsDto.getPhoneNumber());
-
-        return gasStationDetailsRepository.save(gasStationDetails);
     }
 }
