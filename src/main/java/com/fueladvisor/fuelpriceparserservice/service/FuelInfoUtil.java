@@ -81,6 +81,8 @@ public class FuelInfoUtil {
         put("wog", Arrays.asList("0 800 300 525", ""));
     }};
 
+    public static List<FuelType> allFuelTypes = Arrays.asList(A92, A95, A95_PLUS, DIESEL_FUEL, DIESEL_FUEL_PLUS, GAS);
+
     public static boolean isGasStationExists(String gasStationId) {
         return gasStationMapping.containsValue(gasStationId);
     }

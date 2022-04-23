@@ -5,10 +5,7 @@ import com.fueladvisor.fuelpriceparserservice.model.dto.FuelInfoDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.FuelPriceDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationDetailsDto;
 import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
-import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
-import com.fueladvisor.fuelpriceparserservice.model.entity.GasStation;
-import com.fueladvisor.fuelpriceparserservice.model.entity.GasStationDetails;
-import com.fueladvisor.fuelpriceparserservice.model.entity.Region;
+import com.fueladvisor.fuelpriceparserservice.model.entity.*;
 import com.fueladvisor.fuelpriceparserservice.repository.FuelInfoRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationDetailsRepository;
 import com.fueladvisor.fuelpriceparserservice.repository.GasStationRepository;
@@ -119,25 +116,25 @@ public class FuelInfoService {
         return fuelInfos.isEmpty() ? null : mapToFuelInfoDto(fuelInfos.get(0), fuelPriceDtoList);
     }
 
-    public GasStationLogoDto getGasStationLogoById(String gasStationId) throws IOException {
+    public byte[] getGasStationLogoById(String gasStationId) throws IOException {
         String imageName = getGasStationImageName(gasStationId);
-        byte[] logo = readLogoImage(imageName);
-        return new GasStationLogoDto(gasStationId, logo, FuelInfoUtil.isGasStationExists(gasStationId));
+        return readLogoImage(imageName);
     }
 
     @Transactional(rollbackOn = Exception.class)
     public GasStationDetailsDto getGasStationDetails(String gasStationId) throws IOException {
-        GasStationDetails gasStationDetails = gasStationDetailsRepository
-                .findByGasStationId(gasStationId)
+        GasStation gasStation = gasStationRepository
+                .findById(gasStationId)
                 .orElseThrow(() -> new IOException("Gas station with id " + gasStationId + " not found."));
 
-        Double averageFuelPrice = fuelInfoRepository.getAverageAllTypesFuelPriceByGasStationId(gasStationId);
+        GasStationDetails gasStationDetails = gasStation.getGasStationDetails();
 
         return GasStationDetailsDto.builder()
                 .gasStationId(gasStationId)
+                .gasStationName(gasStation.getName())
                 .email(gasStationDetails.getEmail())
                 .phoneNumber(gasStationDetails.getPhoneNumber())
-                .averageFuelPrice(averageFuelPrice)
+                .averagePriceList(getAverageAllTypesFuelPriceByGasStationId(gasStationId))
                 .build();
     }
 
@@ -158,6 +155,21 @@ public class FuelInfoService {
         gasStationDetails.setPhoneNumber(gasStationDetailsDto.getPhoneNumber());
 
         return gasStationDetailsRepository.save(gasStationDetails);
+    }
+
+    private List<FuelPriceDto> getAverageAllTypesFuelPriceByGasStationId(String gasStationId) {
+        List<FuelType> allFuelTypes = FuelInfoUtil.allFuelTypes;
+        List<FuelPriceDto> fuelPriceDtoList = new ArrayList<>();
+
+        allFuelTypes.forEach(fuelType -> {
+            Double averagePrice = fuelInfoRepository
+                    .getAverageFuelPriceByFuelTypeAndGasStationId(gasStationId, fuelType)
+                    .orElse(0d);
+
+            fuelPriceDtoList.add(new FuelPriceDto(fuelType.getName(), averagePrice));
+        });
+
+        return fuelPriceDtoList;
     }
 
     private String getGasStationImageName(String gasStationId) {

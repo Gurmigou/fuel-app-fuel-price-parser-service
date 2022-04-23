@@ -1,12 +1,14 @@
 package com.fueladvisor.fuelpriceparserservice.repository;
 
 import com.fueladvisor.fuelpriceparserservice.model.entity.FuelInfo;
+import com.fueladvisor.fuelpriceparserservice.model.entity.FuelType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
@@ -35,8 +37,13 @@ public interface FuelInfoRepository extends CrudRepository<FuelInfo, Integer> {
     List<FuelInfo> getFuelInfosByRegionLatinNameAndGasStationId(@Param("regionLatin") String regionLatin,
                                                                 @Param("gasStationId") String gasStationId);
 
+//    @Query("SELECT AVG(fi.price) FROM FuelInfo fi " +
+//           "INNER JOIN fi.gasStation gs " +
+//           "WHERE gs.id = :gasStationId")
+//    Double getAverageAllTypesFuelPriceByGasStationId(@Param("gasStationId") String gasStationId);
+
     @Query("SELECT AVG(fi.price) FROM FuelInfo fi " +
            "INNER JOIN fi.gasStation gs " +
-           "WHERE gs.id = :gasStationId")
-    Double getAverageAllTypesFuelPriceByGasStationId(@Param("gasStationId") String gasStationId);
+           "WHERE gs.id = ?1 AND fi.fuelType = ?2")
+    Optional<Double> getAverageFuelPriceByFuelTypeAndGasStationId(String gasStationId, FuelType fuelType);
 }

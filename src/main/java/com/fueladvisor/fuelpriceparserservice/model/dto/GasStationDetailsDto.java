@@ -2,6 +2,8 @@ package com.fueladvisor.fuelpriceparserservice.model.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -9,7 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 public class GasStationDetailsDto {
     private String gasStationId;
+    private String gasStationName;
     private String email;
     private String phoneNumber;
-    private Double averageFuelPrice;
+    private List<FuelPriceDto> averagePriceList;
 }

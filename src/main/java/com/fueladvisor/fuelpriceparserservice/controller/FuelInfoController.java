@@ -5,6 +5,7 @@ import com.fueladvisor.fuelpriceparserservice.model.dto.GasStationLogoDto;
 import com.fueladvisor.fuelpriceparserservice.model.entity.GasStationDetails;
 import com.fueladvisor.fuelpriceparserservice.service.FuelInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class FuelInfoController {
         } catch (IOException e) {
             return ResponseEntity
                     .badRequest()
-                    .body(e.toString());
+                    .body(e.getMessage());
         }
     }
 
@@ -53,17 +54,19 @@ public class FuelInfoController {
                 response = fuelInfoService.getFuelInfosInAllRegionsByGasStationId(gasStationId);
             return ResponseEntity.ok(response);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/logo")
     public ResponseEntity<?> getGasStationLogo(@RequestParam String gasStationId) {
         try {
-            GasStationLogoDto gasStationLogo = fuelInfoService.getGasStationLogoById(gasStationId);
-            return ResponseEntity.ok(gasStationLogo);
+            byte[] img = fuelInfoService.getGasStationLogoById(gasStationId);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG)
+                    .body(img);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -73,7 +76,7 @@ public class FuelInfoController {
             GasStationDetailsDto gasStationDetails = fuelInfoService.getGasStationDetails(gasStationId);
             return ResponseEntity.ok(gasStationDetails);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -83,7 +86,7 @@ public class FuelInfoController {
             GasStationDetails gasStationDetails = fuelInfoService.updateGasStationDetails(gasStationDetailsDto);
             return ResponseEntity.ok(gasStationDetails);
         } catch (IOException e) {
-            return ResponseEntity.badRequest().body(e);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
