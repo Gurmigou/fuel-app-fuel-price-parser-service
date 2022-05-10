@@ -11,6 +11,16 @@ The information you can get is:
 ### Source
 The source of the data is [there](https://index.minfin.com.ua/markets/fuel/detail/).
 
+### ! This microservice and security !
+All the endpoints this microservice contains require JWT authorization. Be aware to use the Authorization header in your requests.
+
+Example:
+```
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0QGdtYWlsLmNvbSIsImlhdCI6MTY1MjIxMzc4MSwiZXhwIjoxNjUyNTcyODAwfQ.VIlTrW12ceo4zZ0iDvaPjILl8bminXeZumwoJlpSOXsfaK5Ikhw31zOhoH3kA6Obtg7hZBwNWkWRRxuFuHh9Pg
+```
+
+#### For more information about security, see [security microservice](https://github.com/Gurmigou/fuel-app-user-service) 
+
 # Actions (API)
 This section shows a list of possible requests and their example responses.
 ### 1. Get information about the fuel in the specified region
