@@ -158,7 +158,7 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/logo?gasStationId=wog
+http://DOMAIN_NAME/api/v1/fuel-info/logo?gasStationId=wog
 ```
 **Response example:**
 ```jsonc
@@ -171,7 +171,7 @@ GET
 ```
 **URL**
 ```
-http://DOMAIN_NAME/api/v1/details?gasStationId=wog
+http://DOMAIN_NAME/api/v1/fuel-info/details?gasStationId=wog
 ```
 **Response example:**
 ```jsonc
