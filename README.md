@@ -1,4 +1,4 @@
-# **Fuel prices microservice**
+# 💰 **Petrol price parser microservice**
 ### About this microservice
 This microservice provides you with data of fuel information in Ukraine.
 The information you can get is:
